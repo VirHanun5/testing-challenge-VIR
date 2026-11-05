@@ -1,0 +1,11 @@
+node_modules/
+
+# Salidas generadas por Cypress (se publican como artifact en CI, no se versionan)
+cypress/reports/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+# Variables locales / secretos
+cypress.env.json
+.env

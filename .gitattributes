@@ -1,0 +1,2 @@
+# Fin de línea LF en todos los sistemas (coincide con Prettier y con el runner Linux del CI)
+* text=auto eol=lf
