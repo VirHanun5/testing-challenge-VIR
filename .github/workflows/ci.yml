@@ -1,0 +1,42 @@
+# Pipeline de CI: corre en cada push (lo pide el PDF) y también se puede lanzar a mano.
+name: CI
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  # Calidad de código: si el linter o el formato fallan, el pipeline lo marca.
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  # Suite de API (Petstore).
+  api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      # npm ci instala las versiones exactas de package-lock.json (y descarga Cypress).
+      - run: npm ci
+      - run: npm run test:api
+      # El reporte se publica como artifact siempre, también si los tests fallan
+      # (justo cuando más se necesita ver qué pasó).
+      - name: Publicar reporte
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reporte-api
+          path: cypress/reports
+          retention-days: 14
