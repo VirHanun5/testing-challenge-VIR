@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "Challenge Tecnico SDET: API (Petstore) y UI (Buggy Cars) con Cypress",
   "scripts": {
-    "test": "cypress run",
+    "test": "cypress run --spec \"cypress/e2e/api/**/*.cy.js,cypress/e2e/ui/**/*.cy.js\"",
     "test:api": "cypress run --spec \"cypress/e2e/api/**/*.cy.js\"",
     "test:ui": "cypress run --spec \"cypress/e2e/ui/**/*.cy.js\"",
     "cy:open": "cypress open",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test:api:hallazgos": "cypress run --spec \"cypress/e2e/api-hallazgos/**/*.cy.js\"",
+    "test:newman": "newman run postman/petstore.postman_collection.json -e postman/petstore.postman_environment.json"
   },
   "keywords": [],
   "author": "Virginia Hanun",
@@ -26,6 +28,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-cypress": "^7.0.3",
     "globals": "^17.14.0",
+    "newman": "^6.2.3",
     "prettier": "^3.9.10"
   }
 }

@@ -1,0 +1,235 @@
+{
+  "info": {
+    "name": "Challenge SDET - Petstore /pet",
+    "description": "Colección equivalente a la suite estable de Cypress (cypress/e2e/api): ciclo de vida de una mascota y casos negativos que cumplen la documentación. Los hallazgos (la API no cumple su documentación) están solo en Cypress: ver docs/hallazgos-api.md. Se corre con: npm run test:newman",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Contrato de una mascota (copia de cypress/schemas/pet.schema.json, tomado del swagger).",
+          "// Postman no puede importar el archivo del repo, por eso el schema está duplicado acá.",
+          "pm.collectionVariables.set('petSchema', JSON.stringify({",
+          "  type: 'object',",
+          "  required: ['name', 'photoUrls'],",
+          "  properties: {",
+          "    id: { type: 'integer' },",
+          "    category: { type: 'object', properties: { id: { type: 'integer' }, name: { type: 'string' } } },",
+          "    name: { type: 'string' },",
+          "    photoUrls: { type: 'array', items: { type: 'string' } },",
+          "    tags: { type: 'array', items: { type: 'object', properties: { id: { type: 'integer' }, name: { type: 'string' } } } },",
+          "    status: { type: 'string', enum: ['available', 'pending', 'sold'] }",
+          "  }",
+          "}));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Ciclo de vida",
+      "description": "Técnica ISTQB: transición de estados. (no existe) → available → sold → eliminada (404). Si un test falla, Newman igual ejecuta los requests siguientes, así que la baja (limpieza) se ejecuta siempre.",
+      "item": [
+        {
+          "name": "1. Alta: crea una mascota con datos dinámicos",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Id único: Petstore es público y compartido (misma lógica que cypress/utils/petFactory.js).",
+                  "const id = Date.now() * 1000 + Math.floor(Math.random() * 1000);",
+                  "pm.collectionVariables.set('petId', id);",
+                  "pm.collectionVariables.set('petName', 'newman-' + id);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Cumple el contrato Pet', () => pm.response.to.have.jsonSchema(JSON.parse(pm.collectionVariables.get('petSchema'))));",
+                  "pm.test('Los datos coinciden con los enviados', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('petId')));",
+                  "  pm.expect(body.name).to.eql(pm.collectionVariables.get('petName'));",
+                  "  pm.expect(body.status).to.eql('available');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{petId}},\n  \"category\": { \"id\": 1, \"name\": \"perros\" },\n  \"name\": \"{{petName}}\",\n  \"photoUrls\": [\"https://example.com/foto.jpg\"],\n  \"tags\": [{ \"id\": 1, \"name\": \"challenge-sdet\" }],\n  \"status\": \"available\"\n}"
+            },
+            "url": "{{baseUrl}}/pet"
+          }
+        },
+        {
+          "name": "2. Consulta: la obtiene por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Cumple el contrato Pet', () => pm.response.to.have.jsonSchema(JSON.parse(pm.collectionVariables.get('petSchema'))));",
+                  "pm.test('Los datos coinciden con los enviados', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('petId')));",
+                  "  pm.expect(body.name).to.eql(pm.collectionVariables.get('petName'));",
+                  "  pm.expect(body.status).to.eql('available');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": { "method": "GET", "url": "{{baseUrl}}/pet/{{petId}}" }
+        },
+        {
+          "name": "3. Modificación: cambia el status a sold",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Cumple el contrato Pet', () => pm.response.to.have.jsonSchema(JSON.parse(pm.collectionVariables.get('petSchema'))));",
+                  "pm.test('Devuelve status sold', () => pm.expect(pm.response.json().status).to.eql('sold'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{petId}},\n  \"category\": { \"id\": 1, \"name\": \"perros\" },\n  \"name\": \"{{petName}}\",\n  \"photoUrls\": [\"https://example.com/foto.jpg\"],\n  \"tags\": [{ \"id\": 1, \"name\": \"challenge-sdet\" }],\n  \"status\": \"sold\"\n}"
+            },
+            "url": "{{baseUrl}}/pet"
+          }
+        },
+        {
+          "name": "4. Consulta: el cambio a sold persiste",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('El status guardado es sold', () => pm.expect(pm.response.json().status).to.eql('sold'));"
+                ]
+              }
+            }
+          ],
+          "request": { "method": "GET", "url": "{{baseUrl}}/pet/{{petId}}" }
+        },
+        {
+          "name": "5. Baja: elimina la mascota",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Confirma el id eliminado', () => pm.expect(pm.response.json().message).to.eql(String(pm.collectionVariables.get('petId'))));"
+                ]
+              }
+            }
+          ],
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/pet/{{petId}}" }
+        },
+        {
+          "name": "6. Consulta después de la baja: 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Mensaje Pet not found', () => pm.expect(pm.response.json().message).to.eql('Pet not found'));"
+                ]
+              }
+            }
+          ],
+          "request": { "method": "GET", "url": "{{baseUrl}}/pet/{{petId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Negativos",
+      "description": "Técnica ISTQB: partición de equivalencia. Clase: id con formato válido que no existe.",
+      "item": [
+        {
+          "name": "Consultar un id inexistente: 404",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('missingId', Date.now() * 1000 + Math.floor(Math.random() * 1000));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Mensaje Pet not found', () => pm.expect(pm.response.json().message).to.eql('Pet not found'));"
+                ]
+              }
+            }
+          ],
+          "request": { "method": "GET", "url": "{{baseUrl}}/pet/{{missingId}}" }
+        },
+        {
+          "name": "Eliminar un id inexistente: 404",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('missingId', Date.now() * 1000 + Math.floor(Math.random() * 1000));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));"]
+              }
+            }
+          ],
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/pet/{{missingId}}" }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "petId", "value": "" },
+    { "key": "petName", "value": "" },
+    { "key": "missingId", "value": "" },
+    { "key": "petSchema", "value": "" }
+  ]
+}
