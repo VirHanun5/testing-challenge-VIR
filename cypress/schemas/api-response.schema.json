@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ApiResponse",
+  "description": "Respuesta genérica (baja y errores), tomada de definitions.ApiResponse en https://petstore.swagger.io/v2/swagger.json",
+  "type": "object",
+  "properties": {
+    "code": { "type": "integer", "format": "int32" },
+    "type": { "type": "string" },
+    "message": { "type": "string" }
+  }
+}
