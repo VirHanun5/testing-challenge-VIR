@@ -40,3 +40,38 @@ jobs:
           name: reporte-api
           path: cypress/reports
           retention-days: 14
+
+  # Colección de Postman equivalente (bonus), ejecutada con Newman.
+  newman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:newman
+
+  # Hallazgos: tests que esperan lo que dice la documentación de Petstore y hoy FALLAN
+  # porque la API no la cumple (ver docs/hallazgos-api.md). No se fuerzan para que pasen.
+  # continue-on-error: el job se ve en rojo con su reporte, pero NO pone en rojo el pipeline,
+  # así un error nuevo en los tests estables no queda tapado por fallas que ya conocemos.
+  api-hallazgos:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:api:hallazgos
+      - name: Publicar reporte
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reporte-api-hallazgos
+          path: cypress/reports
+          retention-days: 14
