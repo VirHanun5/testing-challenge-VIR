@@ -14,6 +14,20 @@ Cypress.Commands.add('getPet', (id) =>
   cy.request({ method: 'GET', url: `${petUrl()}/${id}`, failOnStatusCode: false }),
 );
 
+// ---------- Buggy Cars ----------
+// Crea un usuario por API (POST /users, el mismo request que hace el formulario de registro).
+// Se usa como PRECONDICIÓN en los tests donde el registro no es lo que se prueba: es más rápido
+// y no depende de la UI de registro (el PDF lo permite: "podés hacerlo por API").
+Cypress.Commands.add('registerUserByApi', (user) =>
+  cy.request('POST', `${Cypress.expose('buggyApiUrl')}/users`, {
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    password: user.password,
+    confirmPassword: user.password,
+  }),
+);
+
 Cypress.Commands.add('deletePet', (id) =>
   cy.request({ method: 'DELETE', url: `${petUrl()}/${id}`, failOnStatusCode: false }),
 );

@@ -15,6 +15,8 @@ module.exports = defineConfig({
   // Se pueden pisar sin tocar código: npx cypress run --expose apiUrl=https://otra-url
   expose: {
     apiUrl: 'https://petstore.swagger.io/v2',
+    // API que usa por detrás el sitio Buggy Cars (se vio en DevTools → Network).
+    buggyApiUrl: 'https://k51qryqov3.execute-api.ap-southeast-2.amazonaws.com/prod',
   },
 
   e2e: {
