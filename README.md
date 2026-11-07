@@ -6,6 +6,8 @@ Suite de pruebas automatizadas de punta a punta: **API** (Swagger Petstore, recu
 
 Autora: **Virginia Hanun**. Uso de IA: ver la [sección final](#uso-de-ia).
 
+📊 **Presentación resumida (7 slides):** [docs/presentacion.pdf](docs/presentacion.pdf)
+
 ## Qué cubre
 
 | Parte           | Qué se automatizó                                                                                                                                                                                          | Resultado                                                           |
