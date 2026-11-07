@@ -1,0 +1,8 @@
+{
+  "_nota": "Modelo con pocos comentarios: la API devuelve TODOS los comentarios de un modelo sin paginar, y los modelos con miles de comentarios tardan más de 4 s (ver docs/registro-fallas-tests.md, F-02). El test prueba el voto, no el rendimiento.",
+  "model": {
+    "id": "ckl2phsabijs7162409g|ckl2phsabijs716240d0",
+    "make": "Lancia",
+    "name": "Stratos"
+  }
+}

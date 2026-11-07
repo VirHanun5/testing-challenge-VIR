@@ -28,6 +28,37 @@ Cypress.Commands.add('registerUserByApi', (user) =>
   }),
 );
 
+// Login por API + cy.session.
+// - Por API: pide el token a POST /oauth/token (lo mismo que hace el formulario) y lo guarda en
+//   localStorage["token"], que es donde la app lo busca al cargar. Se usa cuando el login NO es lo
+//   que se está probando (el login por UI ya tiene su propio test en login.cy.js).
+// - cy.session: guarda la sesión con el nombre del usuario. Si el mismo usuario vuelve a loguearse
+//   (en otro test o en un reintento), Cypress la RESTAURA en vez de repetir el login.
+// - validate: después de restaurarla, comprueba que siga siendo válida (el header muestra Logout).
+Cypress.Commands.add('loginByApi', (user) => {
+  cy.session(
+    user.username,
+    () => {
+      cy.request({
+        method: 'POST',
+        url: `${Cypress.expose('buggyApiUrl')}/oauth/token`,
+        form: true, // la app manda los datos como formulario (application/x-www-form-urlencoded)
+        body: { grant_type: 'password', username: user.username, password: user.password },
+        log: false,
+      }).then((res) => {
+        cy.visit('/');
+        cy.window().then((win) => win.localStorage.setItem('token', res.body.access_token));
+      });
+    },
+    {
+      validate() {
+        cy.visit('/');
+        cy.contains('a', 'Logout').should('be.visible');
+      },
+    },
+  );
+});
+
 Cypress.Commands.add('deletePet', (id) =>
   cy.request({ method: 'DELETE', url: `${petUrl()}/${id}`, failOnStatusCode: false }),
 );

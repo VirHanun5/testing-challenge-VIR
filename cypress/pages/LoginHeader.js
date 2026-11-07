@@ -22,6 +22,10 @@ class LoginHeader {
     return cy.contains('a', 'Logout');
   }
 
+  logout() {
+    this.logoutLink().click();
+  }
+
   errorMessage() {
     return cy.contains('Invalid username/password');
   }
