@@ -44,14 +44,16 @@ describe('Buggy Cars: login', () => {
   // Observado al ejecutar (2026-11-06): con campos vacíos la app NO muestra un mensaje propio.
   // Los campos tienen el atributo HTML `required`, así que el NAVEGADOR frena el envío y muestra
   // su globito ("Completa este campo" en español / "Please fill out this field" en inglés).
-  // No se valida ese texto porque depende del idioma del navegador (el CI corre en inglés):
-  // se valida el estado del campo (validity.valueMissing) y que no se envió ningún request.
+  // No se compara ese texto porque depende del idioma del navegador (el CI corre en inglés):
+  // se valida que el campo esté marcado como obligatorio (validity.valueMissing), que el navegador
+  // tenga un mensaje para mostrar (validationMessage no vacío) y que no se envió ningún request.
   context('Login fallido con campos vacíos: el navegador frena el envío', () => {
     it('con usuario y contraseña vacíos', () => {
       loginHeader.login('', '');
 
       cy.get('input[name="login"]').should(($input) => {
         expect($input[0].validity.valueMissing, 'usuario marcado como obligatorio').to.be.true;
+        expect($input[0].validationMessage, 'mensaje que muestra el navegador').to.not.be.empty;
       });
       cy.get('@loginRequest.all').should('have.length', 0);
       cy.get('input[name="login"]').should('be.visible'); // sigue sin sesión
@@ -65,6 +67,7 @@ describe('Buggy Cars: login', () => {
         .find('input[name="password"]')
         .should(($input) => {
           expect($input[0].validity.valueMissing, 'contraseña marcada como obligatoria').to.be.true;
+          expect($input[0].validationMessage, 'mensaje que muestra el navegador').to.not.be.empty;
         });
       cy.get('@loginRequest.all').should('have.length', 0);
       cy.get('input[name="login"]').should('be.visible'); // sigue sin sesión
