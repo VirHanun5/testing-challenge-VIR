@@ -80,3 +80,73 @@ _Captura de Virginia (2026-11-06): test "con usuario completo y contraseña vac�
 **La expectativa de un test sale de observar el sistema (o de su documentación), no de suponer.** Cuando no hay documentación, como en Buggy Cars, primero se observa el comportamiento y después se escribe la verificación. Al marcar el caso como "no confirmado" antes de correrlo, la falla se pudo identificar enseguida como un error del test y no como un bug.
 
 **¿Es un bug de la app?** No. Como mucho es una **observación de UX**: el mensaje es el genérico del navegador, no uno propio de la app. Se menciona en ESTRATEGIA.md, no en BUGS.md.
+
+---
+
+## F-02 — Voto: el test esperaba la página con el tiempo por defecto (4 s) y la API tardó más
+
+| Campo             | Valor                                                                                                                                          |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fecha**         | 2026-11-07                                                                                                                                     |
+| **Test**          | `Buggy Cars: votar un modelo con comentario › Con la sesión iniciada, vota...` ([`cypress/e2e/ui/vote.cy.js`](../cypress/e2e/ui/vote.cy.js))   |
+| **Sitio**         | https://buggy.justtestit.org/model/ckl2phsabijs71623vk0%7Cckl2phsabijs71623vog (Lamborghini Reventón)                                          |
+| **Entorno**       | Cypress 16.2.1, navegador Electron (`cypress run`), Windows 11, en la PC de Virginia                                                           |
+| **Clasificación** | **Falso positivo**: el voto no llegó a probarse; falló la espera del test                                                                      |
+| **Causa**         | El test buscaba "Votes:" con la espera por defecto de Cypress (4 s) en lugar de **esperar la respuesta** del request del modelo, que tardó más |
+| **Estado**        | ✅ Corregido: la suite de UI pasa 8 de 8 (ejecutada por Virginia)                                                                              |
+
+### 1. Qué hacía el test
+
+Entraba a la página del modelo y buscaba el título **"Votes:"** para leer la cantidad de votos antes de votar. Cypress reintenta esa búsqueda durante **4 segundos** (`defaultCommandTimeout`) y, si no aparece, falla.
+
+### 2. Qué pasó al ejecutarlo
+
+Virginia corrió `npm run test:ui`: **7 de 8 OK**; falló solo el voto.
+
+```
+√ login.cy.js   5 tests  5 passing
+√ logout.cy.js  1 test   1 passing
+√ register.cy.js 1 test  1 passing
+× vote.cy.js    1 test   1 failing
+```
+
+### 3. Qué se observó en la evidencia
+
+En la captura automática de Cypress:
+
+- La **sesión estaba iniciada** (header "Hi, Lyla", Profile, Logout): el login por API + `cy.session` funcionó.
+- La página del modelo seguía **cargando** (spinner).
+- En el log, el request **`GET /models/...` seguía pendiente** cuando falló la búsqueda de "Votes:".
+
+![Cypress: la página del modelo sigue cargando y el GET /models sigue pendiente cuando vence la búsqueda de "Votes:"](img/f02-voto-espera-por-defecto-4s.png)
+
+### 4. Por qué pasa (análisis con medición)
+
+La API devuelve **todos los comentarios** del modelo en una sola respuesta, sin paginar. Medición del 2026-11-07 (desde el navegador, `GET /models/<id>`):
+
+| Modelo                                     | Comentarios | Respuesta | Tiempo    |
+| ------------------------------------------ | ----------- | --------- | --------- |
+| Lamborghini Diablo                         | 3686        | 324 KB    | 4,4 s     |
+| **Lamborghini Reventón** (modelo del test) | 2397        | 221 KB    | **4,3 s** |
+| Lamborghini Aventador                      | 1789        | 177 KB    | 3,4 s     |
+| Pagani Zonda                               | 857         | 88 KB     | 2,9 s     |
+| Lancia Stratos                             | 178         | 17 KB     | 1,6 s     |
+
+Cuantos más comentarios, más tarda. El Reventón supera los 4 s que esperaba el test.
+
+### 5. Cómo se corrigió
+
+| Antes                                             | Después                                                                                                                                                                                                                        |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Buscaba "Votes:" con la espera por defecto (4 s)  | `cy.intercept('GET', '**/models/*')` + **`cy.wait('@modelRequest')`** al cargar, después de votar y después de recargar: Cypress espera **la respuesta** (hasta 30 s por defecto) y sigue apenas llega. **Sin esperas fijas.** |
+| Votaba el Lamborghini Reventón (2397 comentarios) | Vota el **Lancia Stratos** (178 comentarios): el test prueba el voto, no el rendimiento, y con menos datos hay menos ruido                                                                                                     |
+
+### 6. Resultado
+
+Virginia volvió a correr `npm run test:ui` (2026-11-07): **8 de 8 OK** (login 5, logout 1, registro 1, voto 1).
+
+### 7. Lección aprendida
+
+**En una SPA, esperar el request que trae los datos, no el elemento con el tiempo por defecto.** El tiempo por defecto sirve para la UI, pero no para una API lenta. Y elegir los **datos de prueba** también es diseñar el test: un dato "pesado" agrega ruido a lo que se quiere verificar.
+
+**¿Es un bug de la app?** No es un defecto funcional, pero sí una **observación de rendimiento** real: la página de un modelo descarga miles de comentarios sin paginar y tarda más de 4 s. Va a ESTRATEGIA.md (pruebas de performance).
