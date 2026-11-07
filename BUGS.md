@@ -8,13 +8,16 @@ Sitio: https://buggy.justtestit.org/ (sitio de práctica con errores intencional
 
 ## Resumen
 
-| Id                                                                                                        | Bug                                                                                    | Tipo                       | Severidad | Prioridad |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------- | --------- | --------- |
-| [BUG-01](#bug-01--el-paginador-del-ranking-deja-avanzar-más-allá-de-la-última-página)                     | El paginador del ranking deja avanzar más allá de la última página                     | Funcional (valores límite) | Media     | Media     |
-| [BUG-02](#bug-02--escribir-la-primera-o-la-última-página-en-el-paginador-no-navega)                       | Escribir la primera o la última página en el paginador no navega                       | Funcional (valores límite) | Media     | Media     |
-| [BUG-03](#bug-03--el-campo-last-name-muestra-el-error-first-name-is-required)                             | El campo "Last Name" muestra el error "First Name is required"                         | Funcional (texto)          | Baja      | Media     |
-| [BUG-04](#bug-04--la-ficha-del-lamborghini-diablo-dice-max-speed-25kmh)                                   | La ficha del Lamborghini Diablo dice "Max Speed: 25km/h"                               | Datos                      | Baja      | Media     |
-| [BUG-05](#bug-05--el-login-y-el-registro-no-indican-qué-dato-va-en-cada-campo-ni-cuáles-son-obligatorios) | El login y el registro no indican qué dato va en cada campo ni cuáles son obligatorios | Usabilidad / accesibilidad | Baja      | Media     |
+| Id                                                                                                                    | Bug                                                                                                 | Tipo                       | Severidad | Prioridad |
+| --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------- | --------- | --------- |
+| [BUG-01](#bug-01--el-paginador-del-ranking-deja-avanzar-más-allá-de-la-última-página)                                 | El paginador del ranking deja avanzar más allá de la última página                                  | Funcional (valores límite) | Media     | Media     |
+| [BUG-02](#bug-02--escribir-la-primera-o-la-última-página-en-el-paginador-no-navega)                                   | Escribir la primera o la última página en el paginador no navega                                    | Funcional (valores límite) | Media     | Media     |
+| [BUG-03](#bug-03--el-campo-last-name-muestra-el-error-first-name-is-required)                                         | El campo "Last Name" muestra el error "First Name is required"                                      | Funcional (texto)          | Baja      | Media     |
+| [BUG-04](#bug-04--la-ficha-del-lamborghini-diablo-dice-max-speed-25kmh)                                               | La ficha del Lamborghini Diablo dice "Max Speed: 25km/h"                                            | Datos                      | Baja      | Media     |
+| [BUG-05](#bug-05--el-login-y-el-registro-no-indican-qué-dato-va-en-cada-campo-ni-cuáles-son-obligatorios)             | El login y el registro no indican qué dato va en cada campo ni cuáles son obligatorios              | Usabilidad / accesibilidad | Baja      | Media     |
+| [BUG-06](#bug-06--el-registro-exige-una-contraseña-de-mínimo-6-caracteres-que-no-se-avisa-y-muestra-un-error-técnico) | El registro exige una contraseña de mínimo 6 caracteres que no se avisa, y muestra un error técnico | Usabilidad / seguridad     | Media     | Alta      |
+| [BUG-07](#bug-07--el-logout-no-funciona-en-la-página-del-ranking-general)                                             | El Logout no funciona en la página del ranking general                                              | Funcional                  | Media     | Alta      |
+| [BUG-08](#bug-08--después-del-logout-la-página-de-perfil-sigue-mostrando-los-datos-personales-del-usuario)            | Después del Logout, la página de perfil sigue mostrando los datos personales del usuario            | Privacidad / seguridad     | Media     | Alta      |
 
 Técnicas ISTQB usadas para encontrarlos: **análisis de valores límite** (BUG-01, BUG-02), **partición de equivalencia** (BUG-03) y **oráculo por consistencia** (BUG-04: cuando no hay una especificación, se compara con el resto del propio sistema).
 
@@ -26,7 +29,7 @@ Técnicas ISTQB usadas para encontrarlos: **análisis de valores límite** (BUG-
 | -------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | **Severidad**        | Media — la navegación lleva a páginas que no existen y la tabla queda vacía sin explicación; no se pierden datos |
 | **Prioridad**        | Media — afecta el ranking, que es una sección principal del sitio, pero hay alternativa (volver con «)           |
-| **Reproducibilidad** | Siempre (5 de 5: flecha » ×2, escribir 6, escribir 99 y la reproducción manual de Virginia hasta "page 10 of 5") |
+| **Reproducibilidad** | Siempre (5 de 5: flecha » ×2, escribir 6, escribir 99 y una reproducción manual hasta "page 10 of 5")            |
 | **Entorno**          | https://buggy.justtestit.org/overall · Chromium 152 · Windows 11 · 2026-11-05 a 2026-11-07                       |
 | **Área**             | Ranking general (`/overall`), paginador                                                                          |
 
@@ -209,7 +212,7 @@ Agrupa tres problemas de **usabilidad y accesibilidad** de la misma pantalla de 
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | **Severidad**        | Baja — los formularios funcionan; el problema es que no guían al usuario                                                               |
 | **Prioridad**        | Media — es lo primero que ve un usuario nuevo y el login está en **todas** las páginas; se corrige con textos                          |
-| **Reproducibilidad** | Siempre (observado por Virginia y confirmado en el HTML de la página)                                                                  |
+| **Reproducibilidad** | Siempre (observado en las pruebas manuales y confirmado en el HTML de la página)                                                       |
 | **Entorno**          | https://buggy.justtestit.org/register (y el header de cualquier página) · Chrome / Chromium 152 · Windows 11 · 2026-11-05 a 2026-11-07 |
 | **Área**             | Login del header y formulario de registro                                                                                              |
 
@@ -249,6 +252,160 @@ Ver resumen. La captura muestra el login del header (recuadro rojo) y el formula
 ### Impacto
 
 El usuario nuevo tiene que adivinar qué completar y por qué los campos aparecen "en error" antes de escribir. Las personas que usan lectores de pantalla o no distinguen el rojo quedan sin información.
+
+---
+
+## BUG-06 — El registro exige una contraseña de mínimo 6 caracteres que no se avisa, y muestra un error técnico
+
+| Campo                | Valor                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Severidad**        | Media — no bloquea (se puede reintentar), pero el alta de usuarios falla con un mensaje que no se entiende y que expone detalles internos     |
+| **Prioridad**        | Alta — es la puerta de entrada al sitio: un usuario nuevo que no entiende el error se va. Se corrige con un texto de ayuda y un mensaje claro |
+| **Reproducibilidad** | Siempre (2 de 2, 2026-11-05 y 2026-11-07)                                                                                                     |
+| **Entorno**          | https://buggy.justtestit.org/register · Chrome · Windows 11 · 2026-11-05 y 2026-11-07                                                         |
+| **Área**             | Registro de usuario (`/register`), campo Password                                                                                             |
+
+### Resumen (en simple)
+
+Al registrarse, la contraseña tiene que tener **al menos 6 caracteres**, pero **el sitio no lo dice en ningún lado**. El usuario se entera recién después de intentar registrarse, y el aviso que aparece es un **mensaje técnico en inglés** ("InvalidParameter... SignUpInput.Password") que alguien no técnico no entiende.
+
+### Pasos para reproducir
+
+1. Abrir https://buggy.justtestit.org/register
+2. Completar Login `TEST98`, First Name `TESTI`, Last Name `TESTTTT` (datos de prueba).
+3. En **Password** y **Confirm Password**, escribir una contraseña de 3 caracteres (por ejemplo `abc`).
+4. Hacer click en **Register**.
+
+### Resultado esperado
+
+- **Antes de enviar:** el campo Password indica la regla (por ejemplo, "mínimo 6 caracteres") y el botón no se habilita, o se avisa al lado del campo, como con los demás errores del formulario.
+- **Si igual se envía:** un mensaje claro para el usuario, por ejemplo "La contraseña debe tener al menos 6 caracteres".
+
+### Resultado obtenido
+
+- El campo Password **no muestra ninguna regla** y queda en verde con 3 caracteres; el botón **Register se habilita**.
+- Al enviar, aparece el aviso rojo: **`InvalidParameter: 1 validation error(s) found. - minimum field size of 6, SignUpInput.Password.`**
+
+### Evidencia
+
+![Formulario de registro completo con datos de prueba y una contraseña de 3 caracteres: todos los campos en verde y el botón Register habilitado](docs/img/bug-06-password-corta-formulario.png)
+
+![Después de hacer click en Register: aviso rojo con el mensaje técnico "InvalidParameter: 1 validation error(s) found. - minimum field size of 6, SignUpInput.Password." (marcado en rojo)](docs/img/bug-06-password-corta-error-tecnico.png)
+
+**Evidencia adicional: hay más reglas que tampoco se avisan.** Durante las pruebas manuales (2026-11-07) se observó que, además del mínimo de 6 caracteres, el registro **exige mayúscula, minúscula, número y carácter especial**: recién con una contraseña que cumple todas esas reglas el registro sale bien. Ninguna de esas reglas aparece en el formulario, así que el usuario puede fallar varias veces antes de dar con una contraseña válida, lo que **agrava** este bug.
+
+![Registro exitoso con una contraseña que cumple todas las reglas: aviso verde "Registration is successful" y formulario vacío](docs/img/bug-06-password-valida-registro-exitoso.png)
+
+_Pendiente de documentar: el mensaje exacto que muestra el sitio cuando falta cada regla (sin mayúscula, sin minúscula, sin número, sin carácter especial). Para registrarlo se propone una prueba por **partición de equivalencia**, cambiando una sola regla por vez: `abcdefgh`, `Abcdefgh`, `Abcdefg1`, `abcdefg1!`, `ABCDEFG1!` (inválidas) y `Abcdefg1!` (válida)._
+
+<details><summary>Detalle técnico (para desarrollo)</summary>
+
+- En el front, la contraseña solo tiene `Validators.required`: no hay regla de largo mínimo ni texto de ayuda. La regla la aplica **el servidor** (`POST /users`).
+- La app muestra el error del servidor **tal cual** (`this.error = e` → `{{ error }}`), sin traducirlo a un mensaje para el usuario.
+- El texto `SignUpInput.Password` es un nombre interno del servicio de registro del backend: mostrarlo expone detalles de la implementación. Por el formato, parece un error de validación de un servicio de AWS (es una **suposición** por el formato, no algo verificado).
+
+</details>
+
+### Impacto
+
+Los usuarios nuevos fallan en el primer paso sin saber por qué, y algunos pueden abandonar el registro. El mensaje técnico, además, da pistas sobre cómo está construido el sistema.
+
+---
+
+## BUG-07 — El Logout no funciona en la página del ranking general
+
+| Campo                | Valor                                                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Severidad**        | Media — falla uno de los flujos principales (cerrar sesión); hay alternativa: ir a otra página y cerrar sesión desde ahí               |
+| **Prioridad**        | Alta — el ranking es una de las secciones principales, y no poder cerrar sesión es un riesgo en una computadora compartida             |
+| **Reproducibilidad** | Siempre que se está en `/overall` (observado el 2026-11-07; consistente con el código del front, que lo provoca de forma determinista) |
+| **Entorno**          | https://buggy.justtestit.org/overall · Chrome · Windows 11 · 2026-11-07                                                                |
+| **Área**             | Header (Logout) en la página del ranking general                                                                                       |
+
+### Resumen (en simple)
+
+Si el usuario está viendo el **ranking de autos** y hace click en **Logout**, **no pasa nada**: la sesión sigue abierta ("Hi, ..."), sin ningún mensaje. En otras páginas (por ejemplo, el registro) el Logout funciona bien.
+
+### Pasos para reproducir
+
+1. Iniciar sesión con un usuario de prueba desde el header.
+2. Ir al ranking: https://buggy.justtestit.org/overall (o click en **Overall Rating** en la home).
+3. Esperar a que cargue la tabla de autos.
+4. Hacer click en **Logout** (arriba a la derecha).
+5. (Comparación) Ir a otra página, por ejemplo https://buggy.justtestit.org/register, y hacer click en **Logout**.
+
+### Resultado esperado
+
+En cualquier página, al hacer click en **Logout** se cierra la sesión: desaparecen "Hi, ..." y los links Profile / Logout, y vuelve el formulario de login.
+
+### Resultado obtenido
+
+- En **`/overall`**: el header sigue mostrando **"Hi, TESTI"**, **Profile** y **Logout**. La sesión no se cierra y no aparece ningún mensaje.
+- En **`/register`** (comparación): el Logout funciona y vuelve el formulario de login.
+
+### Evidencia
+
+![Página del ranking (tabla de autos marcada en naranja) después de hacer click en Logout: el header sigue mostrando "Hi, TESTI", Profile y Logout (marcado en rojo)](docs/img/bug-07-logout-no-funciona-en-ranking.png)
+
+<details><summary>Detalle técnico (para desarrollo)</summary>
+
+- El componente del ranking (`my-overall`) ejecuta `this.broken.breakTwitter()` y `this.broken.breakLogout()` en `ngOnInit`, y `this.broken.reset()` en `ngOnDestroy`: el Logout queda "roto" solo mientras esa página está abierta.
+- El click en Logout hace `doLogout() { this.brokenService.isLogoutBroken() || this.loginService.logout() }`: con la bandera activa no llama a `logout()`, así que el token sigue en `localStorage` y la sesión no se cierra.
+- Por el mismo mecanismo, en esa página también se marca como roto el link de Twitter (no verificado a mano).
+
+</details>
+
+### Impacto
+
+El usuario no puede cerrar sesión desde una de las páginas principales. Si no se da cuenta (por ejemplo, en una computadora compartida), la sesión queda abierta para la siguiente persona.
+
+---
+
+## BUG-08 — Después del Logout, la página de perfil sigue mostrando los datos personales del usuario
+
+| Campo                | Valor                                                                                                           |
+| -------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Severidad**        | Media — la sesión se cierra, pero los datos personales quedan visibles y editables en la pantalla del navegador |
+| **Prioridad**        | Alta — es un problema de **privacidad**: expone nombre, dirección y teléfono a quien use la computadora después |
+| **Reproducibilidad** | Siempre que se hace Logout estando en `/profile` (observado el 2026-11-07; consistente con el código del front) |
+| **Entorno**          | https://buggy.justtestit.org/profile · Chrome · Windows 11 · 2026-11-07                                         |
+| **Área**             | Perfil de usuario (`/profile`) y Logout                                                                         |
+
+### Resumen (en simple)
+
+Si el usuario está en **su perfil** y hace click en **Logout**, la sesión se cierra (arriba vuelve el formulario de login), pero **la página no cambia**: siguen a la vista su usuario, nombre, apellido, **dirección y teléfono**, y los campos se pueden seguir editando. Cualquiera que use esa computadora después puede ver esos datos sin tener sesión.
+
+### Pasos para reproducir
+
+1. Iniciar sesión con un usuario de prueba desde el header.
+2. Hacer click en **Profile** (arriba a la derecha) → https://buggy.justtestit.org/profile
+3. Completar **Address** y **Phone** con datos de prueba y hacer click en **Save** ("The profile has been saved successful").
+4. Hacer click en **Logout**.
+
+### Resultado esperado
+
+Al cerrar la sesión, los datos personales dejan de mostrarse: la app redirige a una página pública (por ejemplo, la home) o vacía el perfil. Es lo que ya hace la propia app cuando alguien **sin sesión** intenta entrar a `/profile`: lo manda a la home (la página está protegida).
+
+### Resultado obtenido
+
+- El header muestra el **formulario de login** (la sesión se cerró).
+- La URL sigue en **`/profile`** y el perfil sigue mostrando **Login `TEST98`, First Name `TESTI`, Last Name `TESTTTT`, Address y Phone**, con los campos editables y el botón **Save** disponible.
+
+### Evidencia
+
+![Perfil después del Logout: la URL sigue en /profile y el header ya muestra el formulario de login (marcados en rojo), pero el usuario, nombre, apellido, dirección y teléfono siguen visibles (marcado en naranja)](docs/img/bug-08-perfil-visible-despues-del-logout.png)
+
+<details><summary>Detalle técnico (para desarrollo)</summary>
+
+- `/profile` está protegida con un guard (`AuthGuard.canActivate`: si no hay sesión, `router.navigate(['/'])`), pero el guard **solo se evalúa al navegar hacia la página**, no cuando la sesión se cierra estando adentro.
+- El componente del perfil (`my-profile`) carga los datos una vez en `ngOnInit` (`api.getProfile()`) y **no se suscribe** al evento `loggedOut` del `LoginService` (otros componentes, como el de la ficha de modelo, sí lo hacen para refrescarse).
+- No se probó qué pasa si, ya sin sesión, se hace click en **Save** desde esta pantalla.
+
+</details>
+
+### Impacto
+
+Exposición de datos personales (dirección y teléfono) en computadoras compartidas o públicas: el usuario cree que cerró su sesión de forma segura, pero sus datos quedan a la vista.
 
 ---
 

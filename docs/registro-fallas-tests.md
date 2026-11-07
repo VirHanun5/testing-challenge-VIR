@@ -14,10 +14,10 @@ Acá quedan los tests que **fallaron por un problema del propio test** (no de la
 | **Fecha**         | 2026-11-06                                                                                                                     |
 | **Test**          | `Buggy Cars: login › Login fallido... › con los campos vacíos` ([`cypress/e2e/ui/login.cy.js`](../cypress/e2e/ui/login.cy.js)) |
 | **Sitio**         | https://buggy.justtestit.org/ (login del header)                                                                               |
-| **Entorno**       | Cypress 16.2.1, navegador Electron (el de `cypress run`), Windows 11, en la PC de Virginia                                     |
+| **Entorno**       | Cypress 16.2.1, navegador Electron (el de `cypress run`), Windows 11, PC local de pruebas                                      |
 | **Clasificación** | **Falso positivo**: el test falló sin que la aplicación tenga un defecto                                                       |
 | **Causa**         | La expectativa del test se escribió **sin haberla observado antes**                                                            |
-| **Estado**        | ✅ Corregido: la suite de UI pasa 6 de 6 (ejecutada por Virginia)                                                              |
+| **Estado**        | ✅ Corregido: la suite de UI pasa 6 de 6 (ejecución local)                                                                     |
 
 ### 1. Qué esperaba el test (versión original)
 
@@ -27,7 +27,7 @@ Esa expectativa era una **suposición**: el mensaje se había observado con una 
 
 ### 2. Qué pasó al ejecutarlo
 
-Virginia corrió `npm run test:ui`: **4 de 5 OK y 1 falla**, la de campos vacíos.
+Al correr `npm run test:ui`: **4 de 5 OK y 1 falla**, la de campos vacíos.
 
 ```
 ×  login.cy.js      4 tests   3 passing   1 failing
@@ -65,15 +65,15 @@ Los dos campos del login tienen el atributo HTML **`required`** (visto en el tem
 | —                                             | Verifica que la sesión **sigue sin iniciarse** (el formulario de login sigue visible)                           |
 | 1 caso (ambos vacíos)                         | 2 casos: **ambos vacíos** y **usuario completo con contraseña vacía** (partición de equivalencia)               |
 
-**Por qué NO se valida el texto "Completa este campo":** ese texto lo pone el **navegador según su idioma**. En la PC de Virginia está en español, pero el runner de GitHub Actions está en inglés ("Please fill out this field"). Validar el texto haría que el test pase en una PC y falle en el CI. `validity.valueMissing` es igual en cualquier idioma.
+**Por qué NO se valida el texto "Completa este campo":** ese texto lo pone el **navegador según su idioma**. En la PC de pruebas está en español, pero el runner de GitHub Actions está en inglés ("Please fill out this field"). Validar el texto haría que el test pase en una PC y falle en el CI. `validity.valueMissing` es igual en cualquier idioma.
 
 ### 6. Resultado
 
-Virginia volvió a correr `npm run test:ui`: **6 de 6 OK**. También lo verificó en el modo visual (`npx cypress open`, en Chrome):
+Al volver a correr `npm run test:ui`: **6 de 6 OK**. También se verificó en el modo visual (`npx cypress open`, en Chrome):
 
 ![Cypress en modo visual con los tests de login en verde. En el sitio, el usuario de prueba está completo, la contraseña vacía y el navegador muestra "Completa este campo" debajo del campo de contraseña](img/f01-login-campos-vacios-validacion-navegador.png)
 
-_Captura de Virginia (2026-11-06): test "con usuario completo y contraseña vacía" en verde. El usuario `qa_...` es un dato de prueba generado con Faker._
+_Captura (2026-11-06): test "con usuario completo y contraseña vacía" en verde. El usuario `qa_...` es un dato de prueba generado con Faker._
 
 ### 7. Lección aprendida
 
@@ -90,10 +90,10 @@ _Captura de Virginia (2026-11-06): test "con usuario completo y contraseña vac�
 | **Fecha**         | 2026-11-07                                                                                                                                     |
 | **Test**          | `Buggy Cars: votar un modelo con comentario › Con la sesión iniciada, vota...` ([`cypress/e2e/ui/vote.cy.js`](../cypress/e2e/ui/vote.cy.js))   |
 | **Sitio**         | https://buggy.justtestit.org/model/ckl2phsabijs71623vk0%7Cckl2phsabijs71623vog (Lamborghini Reventón)                                          |
-| **Entorno**       | Cypress 16.2.1, navegador Electron (`cypress run`), Windows 11, en la PC de Virginia                                                           |
+| **Entorno**       | Cypress 16.2.1, navegador Electron (`cypress run`), Windows 11, PC local de pruebas                                                            |
 | **Clasificación** | **Falso positivo**: el voto no llegó a probarse; falló la espera del test                                                                      |
 | **Causa**         | El test buscaba "Votes:" con la espera por defecto de Cypress (4 s) en lugar de **esperar la respuesta** del request del modelo, que tardó más |
-| **Estado**        | ✅ Corregido: la suite de UI pasa 8 de 8 (ejecutada por Virginia)                                                                              |
+| **Estado**        | ✅ Corregido: la suite de UI pasa 8 de 8 (ejecución local)                                                                                     |
 
 ### 1. Qué hacía el test
 
@@ -101,7 +101,7 @@ Entraba a la página del modelo y buscaba el título **"Votes:"** para leer la c
 
 ### 2. Qué pasó al ejecutarlo
 
-Virginia corrió `npm run test:ui`: **7 de 8 OK**; falló solo el voto.
+Al correr `npm run test:ui`: **7 de 8 OK**; falló solo el voto.
 
 ```
 √ login.cy.js   5 tests  5 passing
@@ -143,7 +143,7 @@ Cuantos más comentarios, más tarda. El Reventón supera los 4 s que esperaba e
 
 ### 6. Resultado
 
-Virginia volvió a correr `npm run test:ui` (2026-11-07): **8 de 8 OK** (login 5, logout 1, registro 1, voto 1).
+Al volver a correr `npm run test:ui` (2026-11-07): **8 de 8 OK** (login 5, logout 1, registro 1, voto 1).
 
 ### 7. Lección aprendida
 

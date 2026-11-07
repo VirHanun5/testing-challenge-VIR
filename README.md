@@ -14,7 +14,7 @@ Autora: **Virginia Hanun**. Uso de IA: ver la [sección final](#uso-de-ia).
 | **1. Opcional** | Colección de **Postman** equivalente, ejecutada con **Newman**                                                                                                                                             | 8 requests · 18 verificaciones ✅                                   |
 | **2. UI**       | Registro, login exitoso, login fallido (credenciales inválidas y campos vacíos), voto con comentario y logout                                                                                              | 8 tests ✅                                                          |
 | **3. CI**       | Lint + API + Newman + UI en **Chrome, Firefox y Edge** en cada push, con reportes como artifacts                                                                                                           | ✅                                                                  |
-| **Bonus**       | [BUGS.md](BUGS.md) (5 bugs), [ESTRATEGIA.md](ESTRATEGIA.md) y ejecución en 3 navegadores                                                                                                                   | ✅                                                                  |
+| **Bonus**       | [BUGS.md](BUGS.md) (8 bugs), [ESTRATEGIA.md](ESTRATEGIA.md) y ejecución en 3 navegadores                                                                                                                   | ✅                                                                  |
 
 ## Cómo instalar y correr
 
@@ -103,7 +103,7 @@ Buggy Cars **no tiene atributos `data-test` / `data-cy`**. Cómo se resolvió:
 ## Hallazgos y bugs
 
 - **API Petstore:** 7 diferencias entre la documentación y la API (por ejemplo, `PUT` sobre una mascota inexistente la **crea** en lugar de devolver 404). Detalle, evidencia y severidad: [docs/hallazgos-api.md](docs/hallazgos-api.md).
-- **Buggy Cars:** 5 bugs reportados con pasos, esperado/obtenido, severidad, prioridad y capturas marcadas: [BUGS.md](BUGS.md).
+- **Buggy Cars:** 8 bugs reportados con pasos, esperado/obtenido, severidad, prioridad y capturas marcadas: [BUGS.md](BUGS.md).
 - **Fallas de los propios tests** (falsos positivos) y cómo se corrigieron: [docs/registro-fallas-tests.md](docs/registro-fallas-tests.md).
 - **Exploración manual** previa: [Petstore](docs/exploracion-petstore.md) y [Buggy Cars](docs/exploracion-buggy-cars.md).
 
