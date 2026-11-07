@@ -41,6 +41,32 @@ jobs:
           path: cypress/reports
           retention-days: 14
 
+  # Suite de UI (Buggy Cars) en más de un navegador (bonus del PDF).
+  # matrix: GitHub crea un job por cada navegador de la lista y los corre EN PARALELO.
+  # fail-fast: false → si falla un navegador, los otros siguen (así se ve cuál falló y en cuál no).
+  ui-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, edge]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # "--" pasa el parámetro al comando del script: cypress run --spec ... --browser <navegador>
+      - run: npm run test:ui -- --browser ${{ matrix.browser }}
+      - name: Publicar reporte
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reporte-ui-${{ matrix.browser }}
+          path: cypress/reports
+          retention-days: 14
+
   # Colección de Postman equivalente (bonus), ejecutada con Newman.
   newman:
     runs-on: ubuntu-latest
